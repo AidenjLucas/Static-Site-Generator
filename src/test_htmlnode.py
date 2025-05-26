@@ -1,7 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode,LeafNode
-from parentnode import ParentNode
+from htmlnode import *
 
 class TestHTMLNode(unittest.TestCase):
     
@@ -57,3 +56,5 @@ class TestHTMLNode(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
