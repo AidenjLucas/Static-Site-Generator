@@ -85,12 +85,11 @@ def text_to_textnodes(text):
     nodes= split_nodes_image(nodes)
     nodes= split_nodes_link(nodes)
     return nodes
-
-    
-    
-
+  
 def extract_markdown_images(text):
     return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)",text)
 
 def extract_markdown_links(text):
     return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)",text)
+
+
