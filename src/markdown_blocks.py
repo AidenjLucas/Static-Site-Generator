@@ -24,18 +24,15 @@ def block_to_block_type(markdown):
     for line in markdown.splitlines():
     
         line_count += 1
-
-        if f"{line_count}. " != line[0:3]:
+        if not line.startswith(f"{line_count}. "):
             matched = False
-
         curr_char = line[0:2]
-
         if curr_char != char and char != "" and curr_char[0] != f"{line_count}":
            break    
         char = curr_char
         
     if line_count == len(markdown.splitlines()):
-        if char == "> ": return BlockType.QUOTE
+        if char[0] == ">": return BlockType.QUOTE
         if char == "- ": return BlockType.UNORDERED_LIST
         if matched: return BlockType.ORDERED_LIST
    
