@@ -21,14 +21,16 @@ def block_to_block_type(markdown):
     char = ""
     line_count = 0
     matched = True
-    for line in markdown.splitlines():
-    
+    lines = markdown.splitlines()
+    for line in lines:
         line_count += 1
-        if not line.startswith(f"{line_count}. "):
-            matched = False
         curr_char = line[0:2]
-        if curr_char != char and char != "" and curr_char[0] != f"{line_count}":
-           break    
+
+        if not line.startswith(f"{line_count}. "):
+           matched = False
+        if curr_char != char and char != "" and not matched:
+           break
+
         char = curr_char
         
     if line_count == len(markdown.splitlines()):
