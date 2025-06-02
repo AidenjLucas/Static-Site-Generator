@@ -13,7 +13,7 @@ class BlockType(Enum):
 
 def block_to_block_type(markdown):
     
-    if re.match(r"^#{1,6}\s\w*",markdown) != None:
+    if re.match(r"^#{1,6}\s\w*", markdown) != None:
         return BlockType.HEADING
     if markdown.startswith("```") and markdown.endswith("```"):
         return BlockType.CODE
@@ -44,4 +44,7 @@ def block_to_block_type(markdown):
 def markdown_to_blocks(markdown):
     return list(filter(lambda block: block != "",
                         map(lambda block: block.strip(), markdown.split("\n\n"))))
-   
+
+def get_block_heading_tag(block):
+    match = re.match(r"(^#{1,6})\s\w*", block)
+    return len(match.group[0])

@@ -77,6 +77,5 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(str(context.exception), "Not a Valid Text Type")
 
 
-
 if __name__ == "__main__":
     unittest.main()

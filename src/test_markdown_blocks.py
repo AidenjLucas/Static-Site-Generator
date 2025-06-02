@@ -2,7 +2,7 @@ import unittest
 from markdown_blocks import *
 
 
-class TestMarkdownToHTML(unittest.TestCase):
+class TestMarkdownToBlocks(unittest.TestCase):
 
     def test_markdown_to_blocks(self):
         md = """
@@ -80,6 +80,7 @@ This is the same paragraph on a new line
         
         self.assertEqual(
             block_to_block_type(markdown),BlockType.ORDERED_LIST)  
-        
-if __name__ == "__main__":
-    unittest.main()
+    
+    
+
+                 
