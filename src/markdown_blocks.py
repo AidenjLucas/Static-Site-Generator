@@ -47,4 +47,4 @@ def markdown_to_blocks(markdown):
 
 def get_block_heading_tag(block):
     match = re.match(r"(^#{1,6})\s\w*", block)
-    return len(match.group[0])
+    return len(match.group(1))
