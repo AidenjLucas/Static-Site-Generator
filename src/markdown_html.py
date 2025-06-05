@@ -12,7 +12,7 @@ def markdown_to_html_node(markdown):
         body.children.append(block_to_html(block))   
        
        
-    print(body.to_html())
+ 
     return body
 
 
@@ -23,16 +23,16 @@ def block_to_html(block):
         case BlockType.PARAGRAPH:
             return ParentNode("p",text_to_children(remove_newlines(block)),None)
         case BlockType.CODE:
-            return LeafNode("pre","<code>" + block[3:-3] + "</code>")
+            return ParentNode("pre",[LeafNode("code",block[3:-3])],None)
         case BlockType.ORDERED_LIST:
-            return ParentNode("ol",block,[],None)
+            return ParentNode("ol",list_to_html(block,0),None)
         case BlockType.UNORDERED_LIST:
-            return ParentNode("ul",block,[],None)
+            return ParentNode("ul",list_to_html(block,1),None)
         case BlockType.HEADING:
             h_num = get_block_heading_tag(block)
             return LeafNode(f"h{h_num}",block[h_num+1:],None)
         case BlockType.QUOTE:
-            return ParentNode("blockquote",block,None)
+            return ParentNode("blockquote",text_to_children(block),None)
         case _:
             raise ValueError("Block has an invalid type!")
     
@@ -48,4 +48,30 @@ def text_to_children(block):
    
 def remove_newlines(block):
     return ' '.join(line.strip() for line in block.splitlines())
+
+
+
+def list_to_html(block,flag) :
+    """
+    flags:
+    (0 : ordered)
+    (1 : unordered)
+    """
+    prefix_cut = 3 - flag
+    lines = block.split("\n")
+    nodes = []
+    for line in lines:
+      tmp_nodes = text_to_textnodes(line)
+     
+      for node in tmp_nodes:
+        if len(node.text) > prefix_cut:
+            if node.text_type == TextType.TEXT:
+                leaf = text_node_to_html_node(node)
+                leaf.tag = "li"
+                leaf.value = leaf.value[prefix_cut:]
+                nodes.append(leaf)
+            else: 
+                nodes.append(ParentNode("li",[text_node_to_html_node(node)]))
+                    
+    return nodes
 
