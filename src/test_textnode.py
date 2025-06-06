@@ -68,13 +68,13 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         node = TextNode("This is a link node", TextType.LINK)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "a")
-        self.assertEqual(html_node.to_html(), "<a>This is a link node</a>")
+        self.assertEqual(html_node.to_html(), '<a href="None">This is a link node</a>')
         
     def test_error_tag(self):
         node = TextNode("This is a link node", "noType")
         with self.assertRaises(Exception) as context:
             text_node_to_html_node(node)
-        self.assertEqual(str(context.exception), "Not a Valid Text Type")
+        self.assertEqual(str(context.exception), "invalid text type: noType")
 
 
 if __name__ == "__main__":

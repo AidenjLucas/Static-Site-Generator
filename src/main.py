@@ -1,27 +1,12 @@
 from textnode import *
-import os
-import shutil
+from copystatic import copy_files,generate_page
 
 def main():
     copy_files("./static","./public")
+    generate_page("content/index.md","template.html","public/index.html")
     return 0
 
-def copy_files(src,dst):
-    if not os.path.exists(dst):
-        os.mkdir(dst)
-    else:
-        shutil.rmtree(dst)
-        os.mkdir(dst)
-    
-    for file in os.listdir(src):
-        src_path = os.path.join(src, file)
-        dst_path = os.path.join(dst, file)
-       
-        if os.path.isfile(src_path):
-            shutil.copy(src_path,dst)
-        else:
-            os.mkdir(dst_path)
-            copy_files(src_path,dst_path)
+
 
 
 

@@ -19,27 +19,18 @@ def block_to_block_type(markdown):
     if markdown.startswith("```") and markdown.endswith("```"):
         return BlockType.CODE
   
-    char = ""
-    line_count = 0
-    matched = True
     lines = markdown.splitlines()
-    for line in lines:
-        line_count += 1
-        curr_char = line[0:2]
 
-        if not line.startswith(f"{line_count}. "):
-           matched = False
-        if curr_char != char and char != "" and not matched:
-           break
+    if all(line.strip().startswith(">") for line in lines):
+        return BlockType.QUOTE
+    if all(line.startswith("- ") for line in lines):
+        return BlockType.UNORDERED_LIST
+    if all(re.match(r"^\d+\. ", line) for line in lines):
+        return BlockType.ORDERED_LIST
 
-        char = curr_char
-        
-    if line_count == len(markdown.splitlines()):
-        if char[0] == ">": return BlockType.QUOTE
-        if char == "- ": return BlockType.UNORDERED_LIST
-        if matched: return BlockType.ORDERED_LIST
-   
     return BlockType.PARAGRAPH
+   
+   
 
 def markdown_to_blocks(markdown):
     return list(filter(lambda block: block != "",
@@ -63,14 +54,14 @@ def block_to_html(block):
         case BlockType.CODE:
             return ParentNode("pre",[LeafNode("code",block[4:-3])],None)
         case BlockType.ORDERED_LIST:
-            return ParentNode("ol",list_to_html(remove_prefix(block,BlockType.ORDERED_LIST)),None)
+            return ParentNode("ol",list_to_html(block,BlockType.ORDERED_LIST),None)
         case BlockType.UNORDERED_LIST:
-            return ParentNode("ul",list_to_html(remove_prefix(block,BlockType.UNORDERED_LIST)),None)
+            return ParentNode("ul",list_to_html(block,BlockType.UNORDERED_LIST),None)
         case BlockType.HEADING:
             h_num = get_block_heading_tag(block)
             return LeafNode(f"h{h_num}",block[h_num+1:],None)
         case BlockType.QUOTE:
-            return ParentNode("blockquote",text_to_children(remove_prefix(block,BlockType.QUOTE)),None)
+            return ParentNode("blockquote",quote_to_html_node(block),None)
         case _:
             raise ValueError("Block has an invalid type!")
     
@@ -82,40 +73,30 @@ def text_to_children(block):
     return nodes
    
 def remove_newlines(block):
-    return ' '.join(line.strip() for line in block.splitlines())
+    return " ".join(block.split("\n"))
 
 def get_block_heading_tag(block):
     match = re.match(r"(^#{1,6})\s\w*", block)
     return len(match.group(1))
 
-def list_to_html(block):
-    lines = block.splitlines()
+def list_to_html(block,block_type):
+    lines = block.split("\n")
     nodes = [] 
-
     for line in lines:
-      if len(line) > 1:
-        tmp_nodes = text_to_textnodes(line)
-        return_node = ParentNode("li",[])
-        for node in tmp_nodes:
-            return_node.children.append(text_node_to_html_node(node))     
-      nodes.append(return_node)
-    
+        if block_type is BlockType.ORDERED_LIST:
+            text = line[3:]
+        else:
+            text = line[2:]
+        children = text_to_children(text)
+        nodes.append(ParentNode("li",children))
     return nodes
 
-def remove_prefix(block,block_type):
-    prefix_cut = 0
-    
-    if block_type == BlockType.ORDERED_LIST:
-        prefix_cut = 3
-    if block_type == BlockType.QUOTE or block_type == BlockType.UNORDERED_LIST:
-        prefix_cut = 2
-
+def quote_to_html_node(block):
     lines = block.split("\n")
-    new_block = ""
+    new_lines = []
     for line in lines:
-        if block_type == BlockType.QUOTE:
-            new_block += line[prefix_cut:] + " "
-        else:    
-            new_block += line[prefix_cut:] + "\n"
-
-    return new_block.strip()
+        if not line.startswith(">"):
+            raise ValueError("invalid quote block")
+        new_lines.append(line.lstrip(">").strip())
+    content = " ".join(new_lines)
+    return  text_to_children(content)
