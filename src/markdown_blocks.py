@@ -59,7 +59,7 @@ def block_to_html(block):
             return ParentNode("ul",list_to_html(block,BlockType.UNORDERED_LIST),None)
         case BlockType.HEADING:
             h_num = get_block_heading_tag(block)
-            return LeafNode(f"h{h_num}",block[h_num+1:],None)
+            return ParentNode(f"h{h_num}",text_to_children(block[h_num+1:]),None)
         case BlockType.QUOTE:
             return ParentNode("blockquote",quote_to_html_node(block),None)
         case _:
