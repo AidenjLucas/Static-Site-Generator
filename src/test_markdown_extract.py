@@ -1,5 +1,5 @@
 import unittest
-from copystatic import *
+from genpage import extract_markdown
 
 
 class TestMarkdownExtract(unittest.TestCase):
