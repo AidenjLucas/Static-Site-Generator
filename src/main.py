@@ -6,10 +6,11 @@ from sys import argv
 def main():
 
     base_path = "/"
-    if len(argv) != 0:
-        base_path = argv[0]
-    
-
+    if len(argv) != 1:
+        base_path = argv[1]
+   
+  
+    print(base_path)
     copy_files("./static","./docs")
     generate_pages_recursive("./content", "template.html","./docs",base_path)
     return 0
